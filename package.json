@@ -7,7 +7,10 @@
     "ios": "react-native run-ios",
     "start": "react-native start",
     "test": "jest",
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "reverse": "adb reverse tcp:8081 tcp:8081",
+    "a": "adb reverse tcp:8081 tcp:8081 && react-native run-android",
+    "s": "adb reverse tcp:8081 tcp:8081 && react-native start"
   },
   "dependencies": {
     "react": "16.13.1",
@@ -32,6 +35,7 @@
     "eslint-plugin-prettier": "^3.1.4",
     "eslint-plugin-react": "^7.21.5",
     "eslint-plugin-react-hooks": "^4.2.0",
+    "eslint-plugin-react-native": "^3.10.0",
     "jest": "^25.1.0",
     "metro-react-native-babel-preset": "^0.59.0",
     "prettier": "^2.2.0",
