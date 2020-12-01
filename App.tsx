@@ -7,6 +7,8 @@ import {
   View,
   Keyboard,
   Alert,
+  ScrollView,
+  Switch,
 } from 'react-native';
 
 const DIGITS_LIMIT = 8;
@@ -62,7 +64,11 @@ const App = () => {
 
   const onInputChangeText = useCallback(
     (text: string) => {
-      if (digitsLimitEnabled && inputValue.length <= DIGITS_LIMIT) {
+      console.log(digitsLimitEnabled);
+      if (
+        (digitsLimitEnabled && inputValue.length <= DIGITS_LIMIT) ||
+        !digitsLimitEnabled
+      ) {
         const isValid = !!text.match(/(0|1)/gm);
 
         if (isValid || !text.length) {
@@ -77,11 +83,14 @@ const App = () => {
 
   const onPressInsert = useCallback(
     (value: string) => {
-      if (inputValue.length <= 8) {
+      if (
+        (digitsLimitEnabled && inputValue.length <= DIGITS_LIMIT) ||
+        !digitsLimitEnabled
+      ) {
         setInputValue((iv) => iv + value);
       }
     },
-    [inputValue]
+    [digitsLimitEnabled, inputValue]
   );
 
   const convert = useCallback(() => {
@@ -96,8 +105,16 @@ const App = () => {
     setResultValue(result.toString());
   }, [inputValue]);
 
+  const clearInputs = useCallback(() => {
+    setInputValue('');
+    setResultValue('');
+  }, []);
+
   return (
-    <View style={{flex: 1}}>
+    <ScrollView
+      contentContainerStyle={{flex: 1}}
+      keyboardDismissMode="interactive"
+    >
       <View style={styles.resultBoardContainer}>
         <View
           style={{
@@ -105,16 +122,9 @@ const App = () => {
             paddingBottom: 24,
           }}
         >
-          <Text style={{flex: 1}}>INPUT</Text>
+          <Text style={styles.labelTitle}>INPUT</Text>
           <TextInput
-            style={{
-              height: 64,
-              fontSize: 34,
-              fontWeight: 'bold',
-              borderColor: '#E9C46A',
-              borderRadius: 10,
-              borderWidth: 2,
-            }}
+            style={styles.resultValueText}
             keyboardType="numeric"
             onChangeText={onInputChangeText}
             value={inputValue}
@@ -122,25 +132,21 @@ const App = () => {
           />
         </View>
         <View style={{flex: 1}}>
-          <Text style={{flex: 1}}>RESULT</Text>
-          <Text
-            style={{
-              height: 64,
-              fontSize: 34,
-              fontWeight: 'bold',
-              borderColor: '#E9C46A',
-              borderRadius: 10,
-              borderWidth: 2,
-              textAlignVertical: 'center',
-              paddingLeft: 5,
-            }}
-          >
-            {resultValue}
-          </Text>
+          <Text style={styles.labelTitle}>RESULT</Text>
+          <Text style={styles.resultValueText}>{resultValue}</Text>
         </View>
       </View>
       {showPressablesContainer && (
         <View style={styles.pressablesContainer}>
+          <View style={{flex: 0.4, flexDirection: 'row'}}>
+            <Text style={{textAlignVertical: 'center'}}>
+              Enable 8-digit limit
+            </Text>
+            <Switch
+              value={digitsLimitEnabled}
+              onValueChange={() => setDigitsLimitEnabled(!digitsLimitEnabled)}
+            />
+          </View>
           <View style={styles.insertPressablesContainer}>
             <InsertPressable
               title="0"
@@ -159,10 +165,19 @@ const App = () => {
             >
               <Text style={styles.pressableTitle}>CONVERT!</Text>
             </Pressable>
+            <Pressable
+              style={styles.clearPressable}
+              android_ripple={{borderless: false, radius: 350}}
+              onPress={clearInputs}
+            >
+              <Text style={[styles.pressableTitle, {fontSize: 22}]}>
+                Clear inputs
+              </Text>
+            </Pressable>
           </View>
         </View>
       )}
-    </View>
+    </ScrollView>
   );
 };
 
@@ -176,7 +191,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    padding: 24,
+    paddingVertical: 24,
   },
   pressable: {
     width: '45%',
@@ -189,6 +204,8 @@ const styles = StyleSheet.create({
     flex: 1,
     elevation: 4,
     backgroundColor: '#e0cf96',
+    padding: 24,
+    paddingBottom: 8,
   },
   pressableTitle: {
     flex: 1,
@@ -200,14 +217,45 @@ const styles = StyleSheet.create({
   },
   convertPressable: {
     height: '80%',
-    width: '100%',
+    width: '65%',
     backgroundColor: '#2A9D8F',
+    borderRadius: 10,
+    elevation: 4,
+  },
+  clearPressable: {
+    height: '80%',
+    width: '25%',
+    backgroundColor: '#E76F51',
     borderRadius: 10,
     elevation: 4,
   },
   convertPressableContainer: {
     flex: 1,
-    paddingHorizontal: 24,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  inputValueText: {
+    height: 64,
+    fontSize: 34,
+    fontWeight: 'bold',
+    borderColor: '#E9C46A',
+    borderRadius: 10,
+    borderWidth: 2,
+  },
+  resultValueText: {
+    height: 64,
+    fontSize: 34,
+    fontWeight: 'bold',
+    borderColor: '#E9C46A',
+    borderRadius: 10,
+    borderWidth: 2,
+    textAlignVertical: 'center',
+    paddingLeft: 5,
+  },
+  labelTitle: {
+    flex: 0.7,
+    fontSize: 24,
+    fontWeight: 'bold',
   },
 });
 
