@@ -5,6 +5,7 @@ A simple app that converts Binary numerals to Decimals, made with React Native b
 Clone the repo.<br>
 Run the folowing commands in the terminal<br>
 ```
+cd Bin2DecApp/
 yarn install
 npx react-native run-android
 npx react-native start
